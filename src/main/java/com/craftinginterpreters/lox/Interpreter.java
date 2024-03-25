@@ -182,7 +182,15 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Object visitLogicalExpr(Expr.Logical expr){
-        throw new RuntimeError("Unsupported language feature");
+        Object left = evaluate(expr.left());
+
+        if (expr.operator().type == TokenType.OR) {
+            if (isTruthy(left)) return left;
+        } else {
+            if (!isTruthy(left)) return left;
+        }
+
+        return evaluate(expr.right());
     }
 
     @Override
@@ -220,8 +228,10 @@ class Interpreter implements Expr.Visitor<Object>,
 
     @Override
     public Void visitWhileStmt(Stmt.While stmt) {
-        throw new RuntimeError("Unsupported");
+        while (isTruthy(evaluate(stmt.condition()))) {
+            execute(stmt.body());
+        }
+        return null;
     }
-
 
 }
