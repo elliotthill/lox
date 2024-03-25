@@ -1,5 +1,7 @@
 package com.craftinginterpreters.lox;
 
+import sun.security.util.Debug;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -52,21 +54,23 @@ public class Lox {
         List<Token> tokens = scanner.scanTokens();
 
         // For now, just print the tokens.
-        /*for (Token token : tokens) {
-            System.out.println(token);
-        }*/
+        for (Token token : tokens) {
+            //System.out.println(token);
+        }
 
         //Parse this motha
         Parser parser = new Parser(tokens);
         List<Stmt> statements =  parser.parse();
 
+        //Log the statements
+        System.out.println("=== Statements ===");
+        System.out.println(new DebugPrinter().print(statements.get(0)));
+        System.out.println("=== End Statements ==\n");
         // Stop if there was a syntax error.
         if (hadError) return;
 
         interpreter.interpret(statements);
 
-
-        //System.out.println(new AstPrinter().print(expression));
     }
 
     static void error(int line, String message) {
