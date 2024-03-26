@@ -23,7 +23,7 @@ public class DebugPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> 
 
     @Override
     public String visitLiteralExpr(Literal expr) {
-        return expr.value().toString();
+        return expr.toString();
     }
 
     @Override
@@ -112,6 +112,11 @@ public class DebugPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> 
         return parenthesize2("while", stmt.condition(), stmt.body());
     }
 
+    @Override
+    public String visitBreakStmt(Stmt.Break stmt) {
+        return "BREAK";
+    }
+
     private String parenthesize(String name, Expr... exprs) {
         StringBuilder builder = new StringBuilder();
 
@@ -121,6 +126,31 @@ public class DebugPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> 
         }
         builder.append(")");
 
+        return builder.toString();
+    }
+
+    @Override
+    public String visitCallExpr(Expr.Call expr) {
+        return parenthesize2("call", expr.callee(), expr.arguments());
+    }
+
+    @Override
+    public String visitFunctionStmt(Stmt.Function stmt) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("(fun " + stmt.name.lexeme + "(");
+
+        for (Token param : stmt.params) {
+            if (param != stmt.params.get(0)) builder.append(" ");
+            builder.append(param.lexeme);
+        }
+
+        builder.append(") ");
+
+        for (Stmt body : stmt.body) {
+            builder.append(body.accept(this));
+        }
+
+        builder.append(")");
         return builder.toString();
     }
 

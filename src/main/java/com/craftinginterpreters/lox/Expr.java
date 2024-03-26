@@ -1,4 +1,5 @@
 package com.craftinginterpreters.lox;
+import java.util.List;
 
 abstract class Expr {
 
@@ -19,6 +20,8 @@ abstract class Expr {
         R visitVariableExpr(Variable expr);
 
         R visitLogicalExpr(Logical expr);
+
+        R visitCallExpr(Call expr);
 
     }
 
@@ -42,6 +45,10 @@ abstract class Expr {
             return this.value;
         }
 
+        public String toString() {
+
+            return Lox.stringify(this.value);
+        }
         protected <R> R accept(Visitor<R> visitor) {
             return visitor.visitLiteralExpr(this);
         }
@@ -266,6 +273,31 @@ abstract class Expr {
 
         protected <R> R accept(Visitor<R> visitor) {
             return visitor.visitLogicalExpr(this);
+        }
+
+    }
+
+    protected static class Call extends Expr {
+
+        private final Expr callee;
+        private final Token paren;
+        private final List<Expr> arguments;
+
+        protected Call(Expr callee, Token paren, List<Expr> arguments) {
+            this.callee = callee;
+            this.paren = paren;
+            this.arguments = arguments;
+
+        }
+
+        public Expr callee() {return this.callee;}
+
+        public Token paren() {return this.paren;}
+
+        public List<Expr> arguments() {return this.arguments;}
+
+        protected <R> R accept(Visitor<R> visitor) {
+            return visitor.visitCallExpr(this);
         }
 
     }

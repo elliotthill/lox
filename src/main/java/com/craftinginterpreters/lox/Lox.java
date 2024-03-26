@@ -55,7 +55,7 @@ public class Lox {
 
         // For now, just print the tokens.
         for (Token token : tokens) {
-            //System.out.println(token);
+            System.out.println(token);
         }
 
         //Parse this motha
@@ -96,5 +96,22 @@ public class Lox {
         } else {
             report(token.line, " at '" + token.lexeme + "'", message);
         }
+    }
+
+    /*
+     * Universal way to string represent any Lox object
+     */
+    public static String stringify(Object object) {
+        if (object == null) return "nil";
+
+        if (object instanceof Double) {
+            String text = object.toString();
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+            return text;
+        }
+
+        return object.toString();
     }
 }
